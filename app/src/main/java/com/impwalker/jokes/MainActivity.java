@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  public class FetchJokes extends AsyncTask<Void, Void, String>{
+  public class FetchJokesTask extends AsyncTask<Void, Void, String>{
 
     @Override
     protected String doInBackground(Void... params) {
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         urlConnection.connect();
 
         InputStream inputStream = urlConnection.getInputStream();
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         if (inputStream == null) {
           // Nothing to do.
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
           // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
           // But it does make debugging a *lot* easier if you print out the completed
           // buffer for debugging.
-          buffer.append(line + "\n");
+          buffer.append(line).append("\n");
         }
 
         if (buffer.length() == 0) {
@@ -118,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
         Log.e("JSON", e.getMessage());
       }
 
-
       return null;
     }
 
@@ -137,14 +136,11 @@ public class MainActivity extends AppCompatActivity {
 
     JSONObject reader = new JSONObject((jsonStr));
     JSONObject joke_object = reader.getJSONObject(VALUE);
-    String joke = joke_object.getString(JOKE);
-
-    return joke;
-
+    return joke_object.getString(JOKE);
   }
 
   public void getJoke(View view){
-    FetchJokes joke_task = new FetchJokes();
+    FetchJokesTask joke_task = new FetchJokesTask();
     joke_task.execute();
     Intent intent = new Intent(this, JokeActivity.class);
     intent.putExtra(EXTRA_JOKE, joke_string);
